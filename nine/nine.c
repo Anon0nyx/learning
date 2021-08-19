@@ -4,10 +4,11 @@
 #include <string.h>
 
 #define BUFSIZE 4096
-#define DIR_PATH TEXT("C:/Users/dtf82/OneDrive/Documents/school/tools/starter_code/learning/nine/test_files")
+#define DIR_PATH TEXT("C:/Users/dtf82/OneDrive/Documents/school/tools/starter_code/learning/nine/")
 
 
 int encrypt(char *filename);
+int decrypt(char *filename);
 char *concat(const char *dest, const char *src);
 
 int main(void) {
@@ -16,7 +17,7 @@ int main(void) {
 	LARGE_INTEGER szDir;
 	WIN32_FIND_DATA fileData;
 	const char *dir_path;
-	const char *vanilla_path = "C:\\Users\\dtf82\\OneDrive\\Documents\\school\\tools\\starter_code\\learning\\nine\\test_files\\*.txt";
+	const char *vanilla_path = "C:\\Users\\dtf82\\OneDrive\\Documents\\school\\tools\\starter_code\\learning\\nine\\*.txt";
 
 	DWORD retval = 0;
 	BOOL success;
@@ -29,43 +30,37 @@ int main(void) {
 		printf("Invalid File Handle Value\n");
 	do {
 		retval = GetFullPathNameA(ffd.cFileName, BUFSIZE, path, lppPart);
-			
-		encrypt(path);
+		/* DETERMINE HERE IF ENCRYPTING OR DECRYPTING
+		encrypt(path);	
+		decrypt(path);
+		*/
+		printf("\n\n");
 	} while (FindNextFile(fileHandle, &ffd) != 0);
 	return 0;
 }
 
 int encrypt(char *filename) {
 	FILE *file_ptr, *temp_file_ptr;
-	char *tempfile = "temp.txt";
+	char *tempfile = "temp.data";
 	char ch;	
 
-	// DEBUGGING HERE
-	printf("%s\n", filename);
-
 	// Open file to read 
-	file_ptr = fopen((char *)filename, "r");
+	file_ptr = fopen(filename, "r");
 	if (file_ptr == NULL)
 		return 1;
-	printf("made it here");
 	// Open temp file to write encrypted char, char by char
 	temp_file_ptr = fopen(tempfile, "w");
 	if (temp_file_ptr == NULL)
 		return 1;
-	printf("Made it here");
 	// Get first character from file
 	ch = fgetc(file_ptr);
-	printf("%c", ch);
 	// While the file is not ended, add 100 to each character
 	// and put these new characters in the temp file
 	while (ch != EOF) {
-		printf("%c", ch);
-		ch = ch + 100;
-		printf("%c", ch);
+		ch = ch + 50;
 		fputc(ch, temp_file_ptr);
 		ch = fgetc(file_ptr);
 	}
-	printf("\n");
 	// Close up these files, our next step is to take the temp file
 	// and copy it to the original file
 	fclose(file_ptr);
@@ -92,6 +87,43 @@ int encrypt(char *filename) {
 	fclose(file_ptr);
 	fclose(temp_file_ptr);
 	printf("File encrypted successfully\n");
+
+	return 0;
+}
+
+int decrypt(char *fileName) {
+	FILE *filePtr, *tempFilePtr;
+	char *tempFile = "temp.data";
+	char ch;
+	
+	filePtr = fopen(fileName, "r");
+	if (filePtr == NULL)
+		printf("Failed A");		
+
+	tempFilePtr = fopen(tempFile, "w");
+	if (tempFilePtr == NULL)
+		printf("Failed B");
+	
+	ch = fgetc(filePtr);
+	while (ch != EOF) {
+		ch = (char)ch - 50;
+		fputc((char)ch, tempFilePtr);
+		ch = fgetc(filePtr);
+	}
+	fclose(filePtr);
+	fclose(tempFilePtr);
+
+	filePtr = fopen(fileName, "w");
+	tempFilePtr = fopen(tempFile, "r");
+
+	ch = fgetc(tempFilePtr);
+	while (ch != EOF) {
+		fputc((char)ch, filePtr);
+		ch = fgetc(tempFilePtr);
+	}
+	fclose(filePtr);
+	fclose(tempFilePtr);
+	printf("File decrypted successfully\n");
 
 	return 0;
 }
