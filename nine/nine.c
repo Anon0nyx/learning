@@ -10,7 +10,7 @@ int main(void) {
 	LARGE_INTEGER szDir;
 	WIN32_FIND_DATA fileData;
 	const char *dir_path;
-	const char *vanilla_path = "C:\\Users\\dfana\\OneDrive\\Documents\\school\\tools\\starter_code\\learning\\nine\\*.txt";
+	const char *vanilla_path = "C:\\Users\\dtf82\\OneDrive\\Documents\\school\\tools\\starter_code\\learning\\nine\\*.txt";
 
 	DWORD retval = 0;
 	BOOL success;
