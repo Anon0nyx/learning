@@ -4,8 +4,9 @@
 #include <string.h>
 
 #define BUFSIZE 4096
+#define DIR_PATH TEXT("C:/Users/dtf82/OneDrive/Documents/school/tools/starter_code/learning/nine/")
 
-int encrypt_file(char *filename) {
+int encrypt(char *filename) {
 	FILE *file_ptr, *temp_file_ptr;
 	char *tempfile = "temp.data";
 	char ch;	
@@ -57,7 +58,7 @@ int encrypt_file(char *filename) {
 	return 0;
 }
 
-int decrypt_file(char *fileName) {
+int decrypt(char *fileName) {
 	FILE *filePtr, *tempFilePtr;
 	char *tempFile = "temp.data";
 	char ch;
