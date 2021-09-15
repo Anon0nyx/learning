@@ -3,6 +3,13 @@
 int encrypt_file(char *filename);
 int decrypt_file(char *filename);
 
+/*
+	The purpose of this program is to either encryt
+	or decrypt all .txt files within the given directory.
+	If given any command line arguments the program will
+	encrypt the files and if given 0 arguments it will
+	decrypt the files.
+*/
 int main(int argc, char *argv[]) {
 	HANDLE fileHandle;
 	WIN32_FIND_DATA ffd;
