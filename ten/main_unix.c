@@ -3,11 +3,21 @@
 #include <string.h>
 #include <unistd.h>
 #include <dirent.h>
+#include "crypt_lib.c"
 
-#define BUFSIZE 256
+#define EXPECTED_PATH "./first_layer"
 
 void copy_string(char *target, char *source);
 int search_directory_tree(char *path);
+
+void copy_string(char *target, char *source) {
+	while (*source) {
+		*target = *source;
+		source++;
+		target++;
+	}
+	*target = '\0'; // Once at the end of the source string create a termination character for our new string location
+}
 
 int search_directory_tree(char *path) {
 	struct dirent *dir_entry;
@@ -24,47 +34,40 @@ int search_directory_tree(char *path) {
 	}
 
 	while ((dir_entry = readdir(dr)) != NULL) {
-		if (!(strcmp(dir_entry->d_name, ".") || strcmp(dir_entry->d_name, ".."))) {
-			char dest[100];
-			int test, count = 0;
-			copy_string(dest, path);
-			strcat(dest, dir_entry->d_name);
-			printf("%s\n", dest);
-			test = chdir(dest);
-			printf("%d\n", test);
-			count++;
-			if (dir_entry->d_type == key) search_directory_tree(dest);
+		if (!(strcmp((char *)dir_entry->d_name, ".") == 0 || strcmp((char *)dir_entry->d_name, "..") == 0)) {
+			if (dir_entry->d_type == key) {
+				char dest[100];
+				int test, count = 0;
+				copy_string(dest, path);
+				strcat(dest, dir_entry->d_name);
+				printf("%s\n", dest);
+				search_directory_tree(dest);
+				count++;
+			} else if (dir_entry->d_type == 8) {
+				char dest[100];
+				strcpy(dest, path);
+				strcat(dest, dir_entry->d_name);
+				decrypt_file(dest);
+			}
 		}
 	}
 	if (count == 0) return 1;
 	
-
 	closedir(dr);
 	return 0;
 }
 
-void copy_string(char *target, char *source) {
-	while (*source) {
-		*target = *source;
-		source++;
-		target++;
-	}
-	*target = '\0';
-}
-
 int main() {
-	char path[BUFSIZE];
+	char path[256];
 	const char *test_path = "/";
 	getcwd(path, sizeof(path));
 
 
-	if (strcmp(test_path, path) == 0) {
-		//printf("Path correct: %s\n%s\n", path, test_path);
+	if (strcmp(EXPECTED_PATH, path) == 0) {
+		search_directory_tree(path);
 	} else {
-		//printf("Path incorrect: %s\nPath needed: %s\nChanging Path\n", path, test_path);
-		chdir("./");
+		chdir(EXPECTED_PATH);
 		getcwd(path, sizeof(path));
-		//printf("New Path: %s\n", path);
 	}
 
 	search_directory_tree(path);

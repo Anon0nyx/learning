@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <string.h>
 
 #define BUFSIZE 4096
-#define DIR_PATH TEXT("C:/Users/dtf82/OneDrive/Documents/school/tools/starter_code/learning/nine/")
 
-int encrypt(char *filename) {
+int encrypt_file(char *filename) {
 	FILE *file_ptr, *temp_file_ptr;
 	char *tempfile = "temp.data";
 	char ch;	
@@ -53,12 +51,13 @@ int encrypt(char *filename) {
 	// Close up the files to finalize the encryption
 	fclose(file_ptr);
 	fclose(temp_file_ptr);
+	remove("./temp.data");
 	printf("File encrypted successfully\n");
 
 	return 0;
 }
 
-int decrypt(char *fileName) {
+int decrypt_file(char *fileName) {
 	FILE *filePtr, *tempFilePtr;
 	char *tempFile = "temp.data";
 	char ch;
@@ -90,6 +89,7 @@ int decrypt(char *fileName) {
 	}
 	fclose(filePtr);
 	fclose(tempFilePtr);
+	remove("temp.data");
 	printf("File decrypted successfully\n");
 
 	return 0;
