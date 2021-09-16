@@ -35,6 +35,7 @@ int search_directory_tree(char *path) {
 
 	while ((dir_entry = readdir(dr)) != NULL) {
 		if (!(strcmp((char *)dir_entry->d_name, ".") == 0 || strcmp((char *)dir_entry->d_name, "..") == 0)) {
+			printf("Made it with: %s\n", dir_entry->d_name);
 			if (dir_entry->d_type == key) {
 				char dest[100];
 				int test, count = 0;

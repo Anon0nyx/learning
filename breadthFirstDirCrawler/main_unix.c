@@ -32,24 +32,30 @@ int breadthFirstDirSearch(queue *dirQueue, char *path) {
 		return 1;
 	}
 	while ((dir_entry = readdir(dr)) != NULL) {
-		printf("Opened directory/file: %s\n", dir_entry->d_name);
-		if (!(strcmp((char *)dir_entry->d_name, ".") == 0 || strcmp((char *)dir_entry->d_name, "..") == 0)) {
+		printf("%d\n", !(strcmp(dir_entry->d_name, ".") == 0 || strcmp(dir_entry->d_name, "..") == 0));
+		if (!(strcmp(dir_entry->d_name, ".") == 0 || strcmp(dir_entry->d_name, "..") == 0)) {
+			printf("Made it with: %s\n%d\n", dir_entry->d_name, dir_entry->d_type);
+			printf("%d\n", (dir_entry->d_type == 8));
 			if (dir_entry->d_type == key) {
+				printf("Made it with: %s\n\n", dir_entry->d_name);
 				char dest[100];
 				strcpy(dest, path);
 				strcat(dest, dir_entry->d_name);
 				queueAdd(dirQueue, dest);	
 				count++;
-			} else if (dir_entry->d_type == 8) {
+			} else {
+				printf("Still alive");
 				char dest[100];
 				strcpy(dest, path);
 				strcat(dest, dir_entry->d_name);
+				printf("%s\ni\n", dest);
 			}
 		}
 	}
 	if (count == 0) return 1;
 	queueRemove(dirQueue);
 	new_path = dirQueue->first->dr;
+	printf("Calling recursive function on dir: %s\n", new_path);
 	breadthFirstDirSearch(dirQueue, new_path);
 	return 0;
 }
