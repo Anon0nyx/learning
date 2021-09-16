@@ -24,16 +24,17 @@ int search_directory_tree(char *path) {
 	}
 
 	while ((dir_entry = readdir(dr)) != NULL) {
-		if (strcmp(dir_entry->d_name, ".") || strcmp(dir_entry->d_name, ".."))
-		char dest[100];
-		int test, count = 0;
-		copy_string(dest, path);
-		strcat(dest, dir_entry->d_name);
-		printf("%s\n", dest);
-		test = chdir(dest);
-		printf("%d\n", test);
-		count++;
-		if (dir_entry->d_type == key) search_directory_tree(dest);
+		if (!(strcmp(dir_entry->d_name, ".") || strcmp(dir_entry->d_name, ".."))) {
+			char dest[100];
+			int test, count = 0;
+			copy_string(dest, path);
+			strcat(dest, dir_entry->d_name);
+			printf("%s\n", dest);
+			test = chdir(dest);
+			printf("%d\n", test);
+			count++;
+			if (dir_entry->d_type == key) search_directory_tree(dest);
+		}
 	}
 	if (count == 0) return 1;
 	
